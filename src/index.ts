@@ -1,7 +1,9 @@
 import { createServer } from "http";
 import express from "express";
 import { ApolloServer, gql } from "apollo-server-express";
-
+import { ApolloServerPluginLandingPageLocalDefault,
+    ApolloServerPluginLandingPageProductionDefault
+} from "apollo-server-core";
 
 // 1
 const startServer = async () => { 
@@ -28,6 +30,7 @@ const startServer = async () => {
     const apolloServer = new ApolloServer({
       typeDefs,
       resolvers,
+      plugins(ApolloServerPluginLandingPageProductionDefault),
     })
   
     // 6
