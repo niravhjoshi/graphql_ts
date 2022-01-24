@@ -1,9 +1,8 @@
 import { createServer } from "http";
 import express from "express";
 import { ApolloServer, gql } from "apollo-server-express";
-import { ApolloServerPluginLandingPageLocalDefault,
-    ApolloServerPluginLandingPageProductionDefault
-} from "apollo-server-core";
+
+const { prisma } = require('../src/prisma/client');
 
 // 1
 const startServer = async () => { 
@@ -13,24 +12,41 @@ const startServer = async () => {
     const httpServer = createServer(app)
   
     // 3
+    // const typeDefs = gql`
+    //   type Query {
+    //     hello: String
+    //   }
+    // `;
     const typeDefs = gql`
-      type Query {
-        hello: String
-      }
-    `;
+    type Query {
+      boards: [Board]
+    }
   
+    type Board {
+      id: ID!
+      title: String!
+      description: String
+      path: String!
+    }
+  `;
     // 4
+    // const resolvers = {
+    //   Query: {
+    //     hello: () => 'Hello world!',
+    //   },
+    // };
     const resolvers = {
-      Query: {
-        hello: () => 'Hello world!',
-      },
-    };
-  
+        Query: {
+          boards: () => {
+            return prisma.board.findMany()
+          }
+        },
+      };
     // 5
     const apolloServer = new ApolloServer({
       typeDefs,
       resolvers,
-      plugins(ApolloServerPluginLandingPageProductionDefault),
+    
     })
   
     // 6
